@@ -6,7 +6,8 @@ NCPU=$1
 # Copy script as it was run
 SCRIPT=$0
 NAME=$(basename $0)
-LOG_FOLDER="10-log_files"
+LOG_FOLDER="10_log_files"
+ADAPTERS_FILE="00_archive/adapters.fasta" 
 
 cp $SCRIPT $LOG_FOLDER/"$TIMESTAMP"_"$NAME"
 
@@ -17,20 +18,22 @@ then
 fi
 
 # Create directory for untrimmed files
-mkdir 02-raw/trimmed 2>/dev/null
+mkdir 02_raw/trimmed 2>/dev/null
 
-rm 10-log_files/"$TIMESTAMP"_01_cutadapt"${i%.fastq.gz}".log 2> /dev/null
+rm 10_log_files/"$TIMESTAMP"_01_cutadapt"${i%.fastq.gz}".log 2> /dev/null
 
 # Paired-end mode
-ls -1 02-raw/*R1.fastq.gz | 
-        sed 's/R1\.fastq\.gz//g' | 
-        sed 's/02\_raw\///g' |
-parallel -j $NCPU cutadapt -a file:01-info_files/adapters.fasta \
-        -A file:01-info_files/adapters.fasta \
-        -o 02-raw/trimmed/{}"R1.fastq.gz" \
-        -p 02-raw/trimmed/{}"R2.fastq.gz" \
+ls -1 02_raw/*R1_001.fastq.gz | 
+        sed 's/R1_001\.fastq\.gz//g' | 
+        sed 's/02_raw\///g' | 
+parallel -j $NCPU cutadapt -a file:"$ADAPTERS_FILE" \
+        -A file:"$ADAPTERS_FILE" \
+        -o 02_raw/trimmed/{}"R1.fastq.gz" \
+        -p 02_raw/trimmed/{}"R2.fastq.gz" \
         -e 0.2 \
+        -q 15 \
+        --trim-n \
         -m 50 \
-        "02-raw/"{}"R1.fastq.gz" "02-raw/"{}"R2.fastq.gz" '2>&1' '>>' 10-log_files/"$TIMESTAMP"_01_cutadapt.log
+        "02_raw/"{}"R1_001.fastq.gz" "02_raw/"{}"R2_001.fastq.gz" '2>&1' '>>' 10_log_files/"$TIMESTAMP"_01_cutadapt.log
 
 
