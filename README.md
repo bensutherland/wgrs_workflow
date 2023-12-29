@@ -39,10 +39,31 @@ multiqc -o 02_raw/fastqc_raw/ 02_raw/fastqc_raw
 
 Trim adapters and for quality in parallel:     
 `./01_scripts/01_cutadapt_PE.sh <num_cores>`     
-...this will trim for quality (-q 15), minimum length (-m 50), and terminal Ns. It will also remove adapters that are present in `00_archive/adapters.fa` 
+...this will trim for quality (-q 15), minimum length (-m 50), and terminal Ns. It will also remove adapters that are present in `00_archive/adapters.fasta`.    
+
+View trimmed data with fastqc and multiqc:      
+```
+fastqc 02_raw/trimmed/*.fastq.gz -o 02_raw/trimmed/fastqc_trimmed/ -t 4
+multiqc -o 02_raw/trimmed/fastqc_trimmed/ 02_raw/trimmed/fastqc_trimmed
+# open and view 02_raw/trimmed/fastqc_trimmed/multiqc_report.html          
+```
+
+If no combining is needed, simply copy links from the trimmed folder to the sample folder:    
+`cp -l 02_raw/trimmed/*.fastq.gz 04_samples/`
+
+
+### Align against reference genome ###
+Download and index your reference genome.     
+e.g., navigate to the folder with your genome, then run:     
+`bwa index GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz`    
+Then use the path and genome name as a variable in the following alignment script.      
+
+Change the variables and launch:    
 
 
 
+
+ 
 
 
 
