@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Global variables
-GENOMEFOLDER="~/genomes"
+GENOMEFOLDER="03_genome"
 GENOME="GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz"
-DATAFOLDER="04-all_samples"
+DATAFOLDER="04_samples"
 NCPU="$1"
 
 # Test if user specified a number of CPUs
@@ -12,29 +12,28 @@ then
     NCPU=4
 fi
 
-
-for file in $(ls -1 "$DATAFOLDER"/*.1.fq.gz)
+# Align reads against the genome
+for file in $(ls -1 "$DATAFOLDER"/*_R1.fastq.gz)
 do
-    # Name of uncompressed file
-    file2=$(echo "$file" | perl -pe 's/\.1.fq.gz/\.2.fq.gz/')
+    # Name of second read file
+    file2=$(echo "$file" | perl -pe 's/_R1.fastq.gz/_R2.fastq.gz/')
     echo "Aligning file $file $file2" 
 
     name=$(basename "$file")
     name2=$(basename "$file2")
-    ID="@RG\tID:ind\tSM:ind\tPL:Illumina"
+    ID="@RG\tID:$name\tSM:$name\tPL:Illumina"
 
-    # Align reads 1 step
+    # Align reads
     bwa mem -t "$NCPU" \
         -R "$ID" \
         "$GENOMEFOLDER"/"$GENOME" "$DATAFOLDER"/"$name" "$DATAFOLDER"/"$name2" 2> /dev/null | 
-        samtools view -Sb -q 10 - > "$DATAFOLDER"/"${name%.fq.gz}".bam
-        #samtools view -Sb -q 20 -f 83 -f 163 -f 99 -f 147 - > "$DATAFOLDER"/"${name%.fq.gz}".bam
+        samtools view -Sb -q 10 - > "$DATAFOLDER"/"${name%.fastq.gz}".bam
 
     # Sort and index
-    samtools sort --threads "$NCPU" -o "$DATAFOLDER"/"${name%.fq.gz}".sorted.bam \
-        "$DATAFOLDER"/"${name%.fq.gz}".bam
+    samtools sort --threads "$NCPU" -o "$DATAFOLDER"/"${name%.fastq.gz}".sorted.bam \
+        "$DATAFOLDER"/"${name%.fastq.gz}".bam
 
-    samtools index "$DATAFOLDER"/"${name%.fq.gz}".sorted.bam
+    samtools index "$DATAFOLDER"/"${name%.fastq.gz}".sorted.bam
 
     # Cleanup
     #rm "$DATAFOLDER"/"${name%.fq.gz}".bam
