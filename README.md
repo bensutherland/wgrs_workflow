@@ -34,9 +34,12 @@ Copy links to all raw data in `02_raw`.
 View raw data with fastqc and multiqc:     
 ```
 fastqc 02_raw/*.fastq.gz -o 02_raw/fastqc_raw/ -t 5
+multiqc -o 02_raw/fastqc_raw/ 02_raw/fastqc_raw
 ```
 
-
+Trim adapters and for quality in parallel:     
+`./01_scripts/01_cutadapt_PE.sh <num_cores>`     
+...this will trim for quality (-q 15), minimum length (-m 50), and terminal Ns. It will also remove adapters that are present in `00_archive/adapters.fa` 
 
 
 
