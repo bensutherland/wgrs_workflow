@@ -5,4 +5,13 @@
 *.log
 10_log_files/*
 02_raw/fastqc_raw/multiqc_data
+*.fna.gz
+*.amb
+*.ann
+*.bwt
+*.md5
+*.pac
+*.sa
+*.bam
+*.bai
 
