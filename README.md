@@ -12,7 +12,8 @@ Please note: this pipeline was developed and inspired by code from [Eric Normand
 - FastQC      
 - MultiQC     
 - Scripts repo from Eric Normandeau     
-
+- picard tools
+- java for picard
 
 #### Citation ####
 If you find this tool useful, please cite the original article that uses the tool:        
@@ -91,11 +92,14 @@ bedtools makewindows -g ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_
 #   note: this will output 04_samples/<your_sample>_cov.txt 
 
 # Use Rscript to summarize and plot
-
+`01_scripts/plot_chr_cov_per_sample.R`    
+#   note: this will output 04_samples/<your_sample>_plot_aligns_per_window.pdf
 
 ```
 
-
+### Mark duplicates ###
+Mark duplicates (optical and PCR):   
+`01_scripts/04_markduplicates.sh`     
 
 
 
