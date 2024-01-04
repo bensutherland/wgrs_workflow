@@ -2,10 +2,11 @@
 *.fastq.gz
 *.zip
 *.html
+*.txt
 *.log
 10_log_files/*
 *multiqc_data
-*.fna.gz
+*.fna*
 *.amb
 *.ann
 *.bwt
@@ -14,4 +15,6 @@
 *.sa
 *.bam
 *.bai
-
+*.bed
+*.gff
+.Rhistory

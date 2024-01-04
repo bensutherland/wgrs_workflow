@@ -53,17 +53,58 @@ If no combining is needed, simply copy links from the trimmed folder to the samp
 
 
 ### Align against reference genome ###
-Download and index your reference genome.     
-e.g., navigate to the folder with your genome, then run:     
-`bwa index GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz`    
-Then use the path and genome name as a variable in the following alignment script.      
+Download and index your reference genome.
+e.g., `bwa index GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz`        
 
-Change the variables and launch:    
+Copy the link to your genome and index files into `03_genome` folder.     
+e.g., `cp -l GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna* 03_genome`      
+
+Update the genome name in the following script and launch:    
+`01_scripts/bwa_mem_align_reads_pe.sh <num_cores>`       
+
+The output of this will be bam files, sorted bam files, and index bam files in `04_samples`.    
+Note: can comment out line in script to delete unsorted bams if needed to preserve space.     
+
+
+### Inspecting alignments ###  
+Optional:     
+If you still have your original .bam files, you can inspect via:    
+`samtools view -Sbt 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz 04_samples/COARL2-01-43986597_S84_L004_R1.bam | samtools flagstat -`      
+
+Interactively run `01_scripts/inspect_alignments.R` to generate a chromosome-only GFF, which will be output as `03_genome/genome_chr.gff`.    
+
+Use bedtools to calculate per-base coverage:    
+`bedtools coverage -a 03_genome/genome_chr.gff -b 04_samples/COARL2-01-43986597_S84_L004_R1.sorted.bam -sorted -d > COARL2-01-43986597_S84_L004_R1_coverage.txt`
+
+
+Alternate approach to quantify coverage:      
+```
+# Unwrap fasta
+gunzip -c 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz > 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna  
+
+fasta_unwrap.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap.fna
+
+# Keep chr only
+grep -E -A1 '^>NC_047' 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap.fna | grep -vE '^--$' - > 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna
+
+# Determine lengths of chromosomes (for interest only)
+fasta_lengths.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna   
+
+# Index the unwrapped, chr-only reference
+samtools faidx ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna
+
+# Determine window positions per chr
+bedtools makewindows -g ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna.fai -w 1000000 > 03_genome/windows.bed
+
+# Calculate coverage per window
+bedtools coverage -a 03_genome/windows.bed -b 04_samples/COARL2-01-43986597_S84_L004_R1.sorted.bam > 04_samples/COARL2-01_coverage.txt  
+
+# Use Rscript to summarize and plot
+
+```
 
 
 
-
- 
 
 
 
