@@ -67,16 +67,6 @@ Note: can comment out line in script to delete unsorted bams if needed to preser
 
 
 ### Inspecting alignments ###  
-Optional:     
-If you still have your original .bam files, you can inspect via:    
-`samtools view -Sbt 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz 04_samples/COARL2-01-43986597_S84_L004_R1.bam | samtools flagstat -`      
-
-Interactively run `01_scripts/inspect_alignments.R` to generate a chromosome-only GFF, which will be output as `03_genome/genome_chr.gff`.    
-
-Use bedtools to calculate per-base coverage:    
-`bedtools coverage -a 03_genome/genome_chr.gff -b 04_samples/COARL2-01-43986597_S84_L004_R1.sorted.bam -sorted -d > COARL2-01-43986597_S84_L004_R1_coverage.txt`
-
-
 Alternate approach to quantify coverage:      
 ```
 # Unwrap fasta
