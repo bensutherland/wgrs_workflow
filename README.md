@@ -11,6 +11,8 @@ Please note: this pipeline was developed and inspired by code from [Eric Normand
 - Linux or Mac operating system     
 - FastQC      
 - MultiQC     
+- Scripts repo from Eric Normandeau     
+
 
 #### Citation ####
 If you find this tool useful, please cite the original article that uses the tool:        
@@ -18,6 +20,7 @@ If you find this tool useful, please cite the original article that uses the too
 Please also be sure to cite the tools applied within each function.      
 
 ## Sections ##
+Add here (#TODO)    
 
 ## Getting started ##
 Clone this repository and change into the main directory.      
@@ -52,7 +55,7 @@ If no combining is needed, simply copy links from the trimmed folder to the samp
 `cp -l 02_raw/trimmed/*.fastq.gz 04_samples/`
 
 
-### Align against reference genome ###
+### Align reads against reference genome ###
 Download and index your reference genome.
 e.g., `bwa index GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz`        
 
@@ -66,30 +69,29 @@ The output of this will be bam files, sorted bam files, and index bam files in `
 Note: can comment out line in script to delete unsorted bams if needed to preserve space.     
 
 
-### Inspecting alignments ###  
-Alternate approach to quantify coverage:      
+### Inspect alignments ###  
+Inspect coverage in bins across chromosomes:      
 ```
-# Unwrap fasta
+# Prepare genome by unzipping, then unwrapping (E. Normandeau Scripts function)     
 gunzip -c 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz > 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna  
 
 fasta_unwrap.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap.fna
 
-# Keep chr only
+# Keep chromosomes only (replace the matching string in grep with notation for chromosomes)  
 grep -E -A1 '^>NC_047' 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap.fna | grep -vE '^--$' - > 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna
 
-# Determine lengths of chromosomes (for interest only)
-fasta_lengths.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna   
-
-# Index the unwrapped, chr-only reference
+# Use samtools to index the unwrapped, chr-only reference
 samtools faidx ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna
 
-# Determine window positions per chr
+# Determine window positions per chr (adjust window size as needed)
 bedtools makewindows -g ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna.fai -w 1000000 > 03_genome/windows.bed
 
-# Calculate coverage per window
-bedtools coverage -a 03_genome/windows.bed -b 04_samples/COARL2-01-43986597_S84_L004_R1.sorted.bam > 04_samples/COARL2-01_coverage.txt  
+# Calculate coverage per window on all sorted bam files in 04_samples
+01_scripts/03_bedtools_coverage.sh
+#   note: this will output 04_samples/<your_sample>_cov.txt 
 
 # Use Rscript to summarize and plot
+
 
 ```
 
