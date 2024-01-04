@@ -2,6 +2,7 @@
 *.fastq.gz
 *.zip
 *.html
+*.pdf
 *.txt
 *.log
 10_log_files/*
@@ -18,3 +19,4 @@
 *.bed
 *.gff
 .Rhistory
+
