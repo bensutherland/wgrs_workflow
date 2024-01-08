@@ -127,7 +127,7 @@ freebayes-parallel <(fasta_generate_regions.py 03_genome/GCF_902806645.1_cgigas_
 
 samtools approach:      
 ```
-
+bcftools mpileup -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 12 | bcftools call -mv -Ob -o 05_genotyping/mpileup_calls.bcf --threads 12
 ```
 
 

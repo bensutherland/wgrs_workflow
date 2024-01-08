@@ -19,4 +19,6 @@
 *.bed
 *.gff
 .Rhistory
+*.bcf
+*.vcf
 
