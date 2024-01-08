@@ -102,5 +102,33 @@ Mark duplicates (optical and PCR):
 `01_scripts/04_markduplicates.sh`     
 
 
+### Additional filtering ###
+to be determined (see workflow)
+
+
+### Merge reads ###
+Make a list of all of the sorted bam files with duplicates marked:      
+`ls -1 04_samples/*.sorted_mdups.bam > 04_samples/bamlist.txt`      
+
+Merge the bam files:    
+`samtools merge -o 05_genotyping/all_merged.bam -b 04_samples/bamlist.txt --threads 24`     
+
+
+### Genotyping ###
+Index the reference genome:     
+`samtools faidx 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna`      
+Note: this will not work on the compressed (.gz) genome.        
+
+
+Freebayes approach:     
+```
+freebayes-parallel <(fasta_generate_regions.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.fai 100000) 26 -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna -L 05_genotyping/all_merged.bam --haplotype-length 0 -kwVa --throw-away-complex-obs --throw-away-complex-obs > 05_genotyping/genotypes.vcf
+```
+
+samtools approach:      
+```
+
+```
+
 
 
