@@ -130,5 +130,15 @@ samtools approach:
 bcftools mpileup -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 12 | bcftools call -mv -Ob -o 05_genotyping/mpileup_calls.bcf --threads 12
 ```
 
+Adding more formats:        
+```
+bcftools mpileup -D --annotate FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/SP,INFO/AD,INFO/ADF,INFO/ADR -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 36 | bcftools call -mv -f GQ -Ob -o 05_genotyping/mpileup_calls.bcf --threads 36
+```
+
+
+### Filtering ###     
+For simplicity, convert to a VCF file:     
+`bcftools view 05_genotyping/mpileup_calls.bcf > 05_genotyping/mpileup_calls.vcf`     
+
 
 
