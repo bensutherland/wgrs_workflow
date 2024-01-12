@@ -137,8 +137,23 @@ bcftools mpileup -D --annotate FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/
 
 
 ### Filtering ###     
-For simplicity, convert to a VCF file:     
-`bcftools view 05_genotyping/mpileup_calls.bcf > 05_genotyping/mpileup_calls.vcf`     
+bcftools view -i '%QUAL>=20 && FORMAT/DP>10' 05_genotyping/mpileup_calls.bcf | grep -vE '^##' | less
+
+Current filter:        
+```
+bcftools view -i 'F_missing < 0.1 & TYPE="snp" & %QUAL>=20 & FORMAT/DP>10' --min-alleles 2 --max-alleles 2 05_genotyping/mpileup_calls.bcf -Ob -o 05_genotyping/mpileup_calls_filt.bcf
+
+# Settings:   
+# F_missing:      fraction of missing genotypes per locus
+# TYPE="snp":     keep only SNPs
+# QUAL:           SNP quality value
+# DP:             depth (per sample; #TODO: confirm)
+# --min-alleles:  at least this many alleles observed per locus
+# --max-alleles:  at most this many alleles observed per locus
+
+# still to set: max depth? Or should this be done in the alignment stage? (#TODO)
+
+```     
 
 
 
