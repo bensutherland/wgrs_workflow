@@ -52,7 +52,7 @@ multiqc -o 02_raw/trimmed/fastqc_trimmed/ 02_raw/trimmed/fastqc_trimmed
 # open and view 02_raw/trimmed/fastqc_trimmed/multiqc_report.html          
 ```
 
-If no combining is needed, simply copy links from the trimmed folder to the sample folder:    
+If no combining of different samples together is needed, simply copy links from the trimmed folder to the sample folder:    
 `cp -l 02_raw/trimmed/*.fastq.gz 04_samples/`
 
 
@@ -125,12 +125,12 @@ Freebayes approach:
 freebayes-parallel <(fasta_generate_regions.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.fai 100000) 26 -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna -L 05_genotyping/all_merged.bam --haplotype-length 0 -kwVa --throw-away-complex-obs --throw-away-complex-obs > 05_genotyping/genotypes.vcf
 ```
 
-samtools approach:      
+Original samtools approach (do not use):      
 ```
 bcftools mpileup -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 12 | bcftools call -mv -Ob -o 05_genotyping/mpileup_calls.bcf --threads 12
 ```
 
-Adding more formats:        
+Improved samtools approach, adding more formats:        
 ```
 bcftools mpileup -D --annotate FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/SP,INFO/AD,INFO/ADF,INFO/ADR -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 36 | bcftools call -mv -f GQ -Ob -o 05_genotyping/mpileup_calls.bcf --threads 36
 ```
