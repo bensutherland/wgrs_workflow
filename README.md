@@ -169,6 +169,6 @@ bcftools view -i 'INFO/AF > 0.05' 05_genotyping/mpileup_calls_filt_AF.bcf -Ob -o
 
 Filter based on linkage:     
 ```
-bcftools +prune -l 0.5 -w 50kb 05_genotyping/mpileup_calls_filt_AF_0.05.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf    
+bcftools +prune -m 0.5 -w 50kb 05_genotyping/mpileup_calls_filt_AF_0.05.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf    
 ```
 
