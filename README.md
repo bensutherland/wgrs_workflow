@@ -132,12 +132,13 @@ bcftools mpileup -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05
 
 Improved samtools approach, adding more formats:        
 ```
-bcftools mpileup -D --annotate FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/SP,INFO/AD,INFO/ADF,INFO/ADR -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 36 | bcftools call -mv -f GQ -Ob -o 05_genotyping/mpileup_calls.bcf --threads 36
+bcftools mpileup -D -d 11500 --annotate FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/SP,INFO/AD,INFO/ADF,INFO/ADR -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 36 | bcftools call -mv --annotate GQ -Ob -o 05_genotyping/mpileup_calls.bcf --threads 36
 ```
 
 
 ### Filtering ###     
-bcftools view -i '%QUAL>=20 && FORMAT/DP>10' 05_genotyping/mpileup_calls.bcf | grep -vE '^##' | less
+e.g., 
+`bcftools view -i '%QUAL>=20 && FORMAT/DP>10' 05_genotyping/mpileup_calls.bcf | grep -vE '^##' | less`    
 
 Current filter:        
 ```
@@ -155,5 +156,19 @@ bcftools view -i 'F_missing < 0.1 & TYPE="snp" & %QUAL>=20 & FORMAT/DP>10' --min
 
 ```     
 
+Add the AF to the dataset, then filter:       
+```
+# Add AF info
+bcftools +fill-tags 05_genotyping/mpileup_calls_filt.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF.bcf -- -t AF
+# note: bcftools plugin options are after the '--' indicator     
 
+# Filter
+bcftools view -i 'INFO/AF > 0.05' 05_genotyping/mpileup_calls_filt_AF.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05.bcf
+
+```
+
+Filter based on linkage:     
+```
+bcftools +prune -l 0.5 -w 50kb 05_genotyping/mpileup_calls_filt_AF_0.05.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf    
+```
 
