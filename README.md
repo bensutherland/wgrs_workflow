@@ -14,6 +14,7 @@ Please note: this pipeline was developed and inspired by code from [Eric Normand
 - Scripts repo from Eric Normandeau     
 - picard tools
 - java for picard
+- vcflib
 
 #### Citation ####
 If you find this tool useful, please cite the original article that uses the tool:        
@@ -171,4 +172,13 @@ Filter based on linkage:
 ```
 bcftools +prune -m 0.5 -w 50kb 05_genotyping/mpileup_calls_filt_AF_0.05.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf    
 ```
+
+Optional: make random subset of variants for data exploration:      
+```
+bcftools view 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf | vcflib vcfrandomsample -r 0.01 > 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb_subset_0.01.vcf
+
+```
+
+Bring the VCF or the subset VCF to your next analysis program.    
+
 
