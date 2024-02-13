@@ -99,20 +99,31 @@ bedtools makewindows -g ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_
 ```
 
 ### Mark duplicates ###
-Mark duplicates (optical and PCR):   
-`01_scripts/04_markduplicates.sh`     
+```
+## Mark duplicates (optical and PCR): 
+01_scripts/04_markduplicates.sh 
+#  note: currently only runs on single core
+
+## Assess mark duplicates output:       
+# Obtain data rows from the duplicate metric individual files
+grep 'Library' 04_samples/*metrics* > 04_samples/markdups_summary.txt
+
+# Calculate the average proportion of duplicates (optical and other) for all files
+awk '{ total += $9 } END { print total/NR }' 04_samples/markdups_summary.txt
+
+```
+note: this only marks duplicates, if want to remove, need to update (#TODO)
 
 
 ### Additional filtering ###
-to be determined (see workflow)
-
+(not yet implemented)
 
 ### Merge reads ###
 Make a list of all of the sorted bam files with duplicates marked:      
 `ls -1 04_samples/*.sorted_mdups.bam > 04_samples/bamlist.txt`      
 
 Merge the bam files:    
-`samtools merge -o 05_genotyping/all_merged.bam -b 04_samples/bamlist.txt --threads 24`     
+`samtools merge 05_genotyping/all_merged.bam -b 04_samples/bamlist.txt --threads 24`     
 
 
 ### Genotyping ###
