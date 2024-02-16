@@ -137,16 +137,11 @@ Freebayes approach:
 freebayes-parallel <(fasta_generate_regions.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.fai 100000) 26 -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna -L 05_genotyping/all_merged.bam --haplotype-length 0 -kwVa --throw-away-complex-obs --throw-away-complex-obs > 05_genotyping/genotypes.vcf
 ```
 
-Original samtools approach (do not use):      
-```
-bcftools mpileup -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 12 | bcftools call -mv -Ob -o 05_genotyping/mpileup_calls.bcf --threads 12
-```
-
-Improved samtools approach, adding more formats:        
+Samtools approach:        
 ```
 bcftools mpileup -D -d 11500 --annotate FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/SP,INFO/AD,INFO/ADF,INFO/ADR -f 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 05_genotyping/all_merged.bam --threads 36 | bcftools call -mv --annotate GQ -Ob -o 05_genotyping/mpileup_calls.bcf --threads 36
 ```
-
+note: the above was done with v.1.16.1, and the -D option may have been discontinued in newer versions.    
 
 ### Filtering ###     
 e.g., 
