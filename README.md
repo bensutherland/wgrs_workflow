@@ -14,7 +14,7 @@ Please note: this pipeline was developed and inspired by code from [Eric Normand
 - Scripts repo from Eric Normandeau     
 - picard tools
 - java for picard
-- vcflib
+- [vcflib](https://github.com/vcflib/vcflib)      
 
 #### Citation ####
 If you find this tool useful, please cite the original article that uses the tool:        
