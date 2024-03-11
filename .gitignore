@@ -23,4 +23,8 @@
 *.vcf
 .DS_Store
 *~
+*.sync
+*.params
+*.mpileup
+*.fst
 
