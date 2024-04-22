@@ -22,9 +22,12 @@ If you find this tool useful, please cite the original article that uses the too
 Please also be sure to cite the tools applied within each function.      
 
 ## Sections ##
-Add here (#TODO)    
+[00. Getting started](#00-getting-started)
+[01. Prepare data](#01-prepare-data)
+[02. Quality control and trimming](#03-quality-control-and-trimming)
 
-## Getting started ##
+
+## 00. Getting started ##
 Clone this repository and change into the main directory.      
 ```
 git clone https://github.com/bensutherland/wgrs_workflow.git
@@ -32,10 +35,11 @@ cd wgrs_workflow
 
 ```
 
-### Prepare data ###
+### 01. Prepare data ###
 Copy links to all raw data in `02_raw`.      
 
-### Quality control and trimming ###
+
+### 02. Quality control and trimming ###
 View raw data with fastqc and multiqc:     
 ```
 fastqc 02_raw/*.fastq.gz -o 02_raw/fastqc_raw/ -t 5
@@ -45,6 +49,8 @@ multiqc -o 02_raw/fastqc_raw/ 02_raw/fastqc_raw
 Trim adapters and for quality in parallel:     
 `./01_scripts/01_cutadapt_PE.sh <num_cores>`     
 ...this will trim for quality (-q 15), minimum length (-m 50), and terminal Ns. It will also remove adapters that are present in `00_archive/adapters.fasta`.    
+
+note: the trimming script  assumes that the read file suffix for R1 is `R1_001.fastq.gz`.    
 
 View trimmed data with fastqc and multiqc:      
 ```
@@ -57,7 +63,7 @@ If no combining of different samples together is needed, simply copy links from 
 `cp -l 02_raw/trimmed/*.fastq.gz 04_samples/`
 
 
-### Align reads against reference genome ###
+### 03. Align reads against reference genome ###
 Download and index your reference genome.
 e.g., `bwa index GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz`        
 
