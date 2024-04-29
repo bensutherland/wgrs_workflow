@@ -36,5 +36,5 @@ do
     samtools index "$DATAFOLDER"/"${name%.fastq.gz}".sorted.bam
 
     # Cleanup
-    #rm "$DATAFOLDER"/"${name%.fq.gz}".bam
+    rm "$DATAFOLDER"/"${name%.fastq.gz}".bam
 done
