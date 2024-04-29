@@ -78,6 +78,14 @@ Note: can comment out line in script to delete unsorted bams if needed to preser
 
 
 ### Inspect alignments ###  
+Compare the number of trimmed reads per sample to the number of reads aligning after filters (-q 10):      
+`01_scripts/assess_results`     
+...output will provide a table of per-sample number of reads and number of reads aligning with MAPQ > 10.    
+Note: to compare directly, it will be necessary to multiply the number of reads by two, given that both reads (R1 and R2 are in the alignment file), and assume that the number of reads in R1 and R2 per sample are equal.     
+
+
+#### Other more specialized approaches: ####
+
 Inspect coverage in bins across chromosomes:      
 ```
 # Prepare genome by unzipping, then unwrapping (E. Normandeau Scripts function)     
