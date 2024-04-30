@@ -73,46 +73,11 @@ e.g., `cp -l GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna* 03_genome`
 Update the genome name in the following script and launch:    
 `01_scripts/bwa_mem_align_reads_pe.sh <num_cores>`       
 
-The output of this will be bam files, sorted bam files, and index bam files in `04_samples`.    
-Note: can comment out line in script to delete unsorted bams if needed to preserve space.     
+The output of this will be sorted and indexed bam files in `04_samples`.    
+Note: can assess results (see below) before or after marking duplicates.     
 
 
-### Inspect alignments ###  
-Compare the number of trimmed reads per sample to the number of reads aligning after filters (-q 10):      
-`01_scripts/assess_results`     
-...output will provide a table of per-sample number of reads and number of reads aligning with MAPQ > 10.    
-Note: to compare directly, it will be necessary to multiply the number of reads by two, given that both reads (R1 and R2 are in the alignment file), and assume that the number of reads in R1 and R2 per sample are equal.     
-
-
-#### Other more specialized approaches: ####
-
-Inspect coverage in bins across chromosomes:      
-```
-# Prepare genome by unzipping, then unwrapping (E. Normandeau Scripts function)     
-gunzip -c 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna.gz > 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna  
-
-fasta_unwrap.py 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap.fna
-
-# Keep chromosomes only (replace the matching string in grep with notation for chromosomes)  
-grep -E -A1 '^>NC_047' 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap.fna | grep -vE '^--$' - > 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna
-
-# Use samtools to index the unwrapped, chr-only reference
-samtools faidx ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna
-
-# Determine window positions per chr (adjust window size as needed)
-bedtools makewindows -g ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_unwrap_chr_only.fna.fai -w 1000000 > 03_genome/windows.bed
-
-# Calculate coverage per window on all sorted bam files in 04_samples
-01_scripts/03_bedtools_coverage.sh
-#   note: this will output 04_samples/<your_sample>_cov.txt 
-
-# Use Rscript to summarize and plot
-`01_scripts/plot_chr_cov_per_sample.R`    
-#   note: this will output 04_samples/<your_sample>_plot_aligns_per_window.pdf
-
-```
-
-### Mark duplicates ###
+### 04. Mark duplicates ###
 ```
 ## Mark duplicates (optical and PCR): 
 01_scripts/04_markduplicates.sh 
@@ -122,17 +87,22 @@ bedtools makewindows -g ./03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic_
 # Obtain data rows from the duplicate metric individual files
 grep 'Library' 04_samples/*metrics* > 04_samples/markdups_summary.txt
 
-# Calculate the average proportion of duplicates (optical and other) for all files
-awk '{ total += $9 } END { print total/NR }' 04_samples/markdups_summary.txt
+# Note: see any individual metrics file to obtain column names for the above markdups summary
+# Open the output in excel or similar to view
 
 ```
-note: this only marks duplicates, if want to remove, need to update (#TODO)
 
 
-### Additional filtering ###
-(not yet implemented)
+### 05. Inspect alignment and duplicate removal results ###  
+Compare the number of trimmed reads per sample to the number of reads aligning after filters (-q 10):      
+`01_scripts/assess_results`     
+...output will provide a table of per-sample number of reads and number of reads aligning with MAPQ > 10.    
+Note: to compare directly, it will be necessary to multiply the number of reads by two, given that both reads (R1 and R2 are in the alignment file), and assume that the number of reads in R1 and R2 per sample are equal.     
 
-### Merge reads ###
+Optional: also see `20_docs/inspect_chr.md` for a more specialized approach in viewing alignments across chromosomes.    
+
+
+### 06. Merge reads ###
 Make a list of all of the sorted bam files with duplicates marked:      
 `ls -1 04_samples/*.sorted_mdups.bam > 04_samples/bamlist.txt`      
 
@@ -140,7 +110,7 @@ Merge the bam files:
 `samtools merge 05_genotyping/all_merged.bam -b 04_samples/bamlist.txt --threads 24`     
 
 
-### Genotyping ###
+### 07. Genotyping ###
 Index the reference genome:     
 `samtools faidx 03_genome/GCF_902806645.1_cgigas_uk_roslin_v1_genomic.fna`      
 Note: this will not work on the compressed (.gz) genome.        
