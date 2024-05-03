@@ -6,7 +6,7 @@ TIMESTAMP=$(date +%Y-%m-%d_%Hh%Mm%Ss)
 
 # Set variables
 JAVA="/usr/bin/java" # full path needed
-PICARD="/usr/local/bin/picard-tools-1.131/picard.jar"        # full path needed
+PICARD="/home/greent/programs/picard.jar"        # full path needed
 REM_DUPS=true
 
 # Mark duplicates on all sorted bam files 
