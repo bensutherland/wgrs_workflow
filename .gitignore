@@ -28,4 +28,5 @@
 *.mpileup
 *.fst
 *.gtf
+*.csi
 
