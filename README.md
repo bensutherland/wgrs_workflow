@@ -133,16 +133,31 @@ e.g.,
 
 Current filter:        
 ```
-bcftools view -i 'F_missing < 0.1 & TYPE="snp" & %QUAL>=20 & FORMAT/DP>10' --min-alleles 2 --max-alleles 2 05_genotyping/mpileup_calls.bcf -Ob -o 05_genotyping/mpileup_calls_filt.bcf
+# first filter out any variant that is within 5 bp of an indel:    
+bcftools filter --threads 20 -g 5 05_genotyping/mpileup_calls.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5.bcf
+
+# second, filter out based on other parameters
+bcftools view -i 'F_missing < 0.1 & TYPE="snp" & %QUAL>=20 & FORMAT/DP>10 & AVG(FMT/DP)>10' --min-alleles 2 --max-alleles 2 05_genotyping/mpileup_calls_noindel5.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10.bcf --threads 42
 
 # Settings:   
 # F_missing:      fraction of missing genotypes per locus
 # TYPE="snp":     keep only SNPs
 # QUAL:           SNP quality value
-# DP:             depth (per sample; #TODO: confirm)
+# DP:             depth (across all samples)
 # --min-alleles:  at least this many alleles observed per locus
 # --max-alleles:  at most this many alleles observed per locus
 
+# then also use vcftools to remove low coverage sites:    
+vcftools --bcf 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10.bcf --minDP 4 --maxDP 100 --recode-bcf --recode-INFO-all --out 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100
+
+# Alternately, use bcftools
+bcftools filter -S . -e "(FORMAT/AD[*:0] + FORMAT/AD[*:1]) < 4 | (FORMAT/AD[*:0] + FORMAT/AD[*:1]) > 100" 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100.bcf --threads 28
+
+# Re-index
+bcftools index 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100.bcf 
+
+# Filter again for high missing (after removing low coverage genotypes)
+bcftools view -i 'F_missing < 0.1' 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100_bcftools.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100_bcftools_miss0.1.bcf --threads 42
 
 ```     
 
