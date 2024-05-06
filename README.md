@@ -143,7 +143,6 @@ bcftools view -i 'F_missing < 0.1 & TYPE="snp" & %QUAL>=20 & FORMAT/DP>10' --min
 # --min-alleles:  at least this many alleles observed per locus
 # --max-alleles:  at most this many alleles observed per locus
 
-# still to set: max depth? Or should this be done in the alignment stage? (#TODO)
 
 ```     
 
