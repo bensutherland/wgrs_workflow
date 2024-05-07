@@ -128,8 +128,20 @@ bcftools mpileup -D -d 11500 --annotate FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/D
 note: the above was done with v.1.16.1, and the -D option may have been discontinued in newer versions.    
 
 ### Filtering ###     
-e.g., 
-`bcftools view -i '%QUAL>=20 && FORMAT/DP>10' 05_genotyping/mpileup_calls.bcf | grep -vE '^##' | less`    
+Use the following script to filter the bcf       
+`01_scripts/filter_bcf.sh`      
+
+Run with defaults, this script will: 
+- remove variants within 5 bp of an indel
+- remove variants with more than 10% missing data across individuals
+- keep only variants of type 'SNP'
+- keep SNPs with a quality of minimum 20 (in any one individual)
+- keep SNPs with an average depth across all samples of at least 10 reads
+- keep only biallelic SNPs
+- remove genotypes (per individual, per site) that have fewer than 10 reads or more than 200 reads
+- remove variants with more than 10% missing data across individuals (again)
+
+At each stage, the script will report the number of variants retained.    
 
 Current filter:        
 ```
