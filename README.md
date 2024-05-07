@@ -129,7 +129,7 @@ note: the above was done with v.1.16.1, and the -D option may have been disconti
 
 ### Filtering ###     
 Use the following script to filter the bcf       
-`01_scripts/filter_bcf.sh`      
+`01_scripts/filter_bcf.sh`     
 
 Run with defaults, this script will: 
 - remove variants within 5 bp of an indel
@@ -142,6 +142,8 @@ Run with defaults, this script will:
 - remove variants with more than 10% missing data across individuals (again)
 
 At each stage, the script will report the number of variants retained.    
+There will also be a log file produced as `<date>_<time>_filter_bcf.log`.    
+
 
 Alternately, this can be run manually to output only a single file:            
 ```
