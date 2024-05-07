@@ -15,6 +15,7 @@ Please note: this pipeline was developed and inspired by code from [Eric Normand
 - picard tools
 - java for picard
 - [vcflib](https://github.com/vcflib/vcflib)      
+- bcftools
 
 #### Citation ####
 If you find this tool useful, please cite the original article that uses the tool:        
@@ -159,18 +160,28 @@ bcftools view 05_genotyping/mpileup_calls_filtered.bcf | grep -vE '^#' - | wc -l
 Allele Frequency:    
 ```
 ## Allele frequency 
+# note, below replace <filtered> with your filtered filename
+
 # Add the AF to the dataset, then filter:       
-bcftools +fill-tags 05_genotyping/mpileup_calls_filt.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF.bcf -- -t AF
+bcftools +fill-tags 05_genotyping/<filtered>.bcf -Ob -o 05_genotyping/<filtered>_AF.bcf -- -t AF
 # note: bcftools plugin options are after the '--' indicator     
 
 # Filter
-bcftools view -i 'INFO/AF > 0.05' 05_genotyping/mpileup_calls_filt_AF.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05.bcf
+bcftools view -i 'INFO/AF > 0.05' 05_genotyping/<filtered>_AF.bcf -Ob -o 05_genotyping/<filtered>_AF_0.05.bcf
 
+# How many variants remain? 
+bcftools view 05_genotyping/<filtered>_AF_0.05.bcf | grep -vE '^#' - | wc -l    
 ```
 
 Linkage:     
 ```
-bcftools +prune -m 0.5 -w 50kb 05_genotyping/mpileup_calls_filt_AF_0.05.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf    
+## Linkage
+# note, below replace <filtered> with your filtered filename
+bcftools +prune -m 0.5 -w 50kb 05_genotyping/<filtered>.bcf -Ob -o 05_genotyping/<filtered>_LD0.5w50kb.bcf    
+
+# How many variants remain?   
+bcftools view 05_genotyping/<filtered>_LD0.5w50kb.bcf | grep -vE '^#' - | wc -l
+
 ```
 
 **Optional subsetting to simplify troubleshooting**    
