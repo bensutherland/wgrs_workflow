@@ -143,39 +143,21 @@ Run with defaults, this script will:
 
 At each stage, the script will report the number of variants retained.    
 
-Current filter:        
+Alternately, this can be run manually to output only a single file:            
 ```
-# first filter out any variant that is within 5 bp of an indel:    
-bcftools filter --threads 20 -g 5 05_genotyping/mpileup_calls.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5.bcf
+bcftools filter --threads 42 -g 5 05_genotyping/mpileup_calls.bcf | bcftools view -i 'F_missing < 0.1 & TYPE="snp" & %QUAL>=20 & AVG(FMT/DP)>10' --min-alleles 2 --max-alleles 2 --threads 42 | bcftools filter -S . -e "(FORMAT/AD[*:0] + FORMAT/AD[*:1]) < 4 | (FORMAT/AD[*:0] + FORMAT/AD[*:1]) > 100" --threads 42 | bcftools view -i 'F_missing < 0.1' -Ob -o 05_genotyping/mpileup_calls_filtered.bcf --threads 42     
 
-# second, filter out based on other parameters
-bcftools view -i 'F_missing < 0.1 & TYPE="snp" & %QUAL>=20 & FORMAT/DP>10 & AVG(FMT/DP)>10' --min-alleles 2 --max-alleles 2 05_genotyping/mpileup_calls_noindel5.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10.bcf --threads 42
+# View number of variants retained
+bcftools view 05_genotyping/mpileup_calls_filtered.bcf | grep -vE '^#' - | wc -l
 
-# Settings:   
-# F_missing:      fraction of missing genotypes per locus
-# TYPE="snp":     keep only SNPs
-# QUAL:           SNP quality value
-# DP:             depth (across all samples)
-# --min-alleles:  at least this many alleles observed per locus
-# --max-alleles:  at most this many alleles observed per locus
-
-# then also use vcftools to remove low coverage sites:    
-vcftools --bcf 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10.bcf --minDP 4 --maxDP 100 --recode-bcf --recode-INFO-all --out 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100
-
-# Alternately, use bcftools
-bcftools filter -S . -e "(FORMAT/AD[*:0] + FORMAT/AD[*:1]) < 4 | (FORMAT/AD[*:0] + FORMAT/AD[*:1]) > 100" 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100.bcf --threads 28
-
-# Re-index
-bcftools index 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100.bcf 
-
-# Filter again for high missing (after removing low coverage genotypes)
-bcftools view -i 'F_missing < 0.1' 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100_bcftools.bcf -Ob -o 05_genotyping/mpileup_calls_noindel5_miss0.1_bialSNP_q20_allDP10_avgDP10_minDP4_maxDP100_bcftools_miss0.1.bcf --threads 42
-
+# This approach can be taken, but it isn't as good as the stepwise approach because the stepwise can allow an individual check of how many variants are retained at each stage. However, it will be much faster and produce the same output as the final output from the above script (with less space taken up).     
 ```     
 
-Add the AF to the dataset, then filter:       
+**Additional filtering (specific to different downstream methods)**   
+Allele Frequency:    
 ```
-# Add AF info
+## Allele frequency 
+# Add the AF to the dataset, then filter:       
 bcftools +fill-tags 05_genotyping/mpileup_calls_filt.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF.bcf -- -t AF
 # note: bcftools plugin options are after the '--' indicator     
 
@@ -184,12 +166,12 @@ bcftools view -i 'INFO/AF > 0.05' 05_genotyping/mpileup_calls_filt_AF.bcf -Ob -o
 
 ```
 
-Filter based on linkage:     
+Linkage:     
 ```
 bcftools +prune -m 0.5 -w 50kb 05_genotyping/mpileup_calls_filt_AF_0.05.bcf -Ob -o 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf    
 ```
 
-Optional: make random subset of variants for data exploration:      
+**Optional subsetting to simplify troubleshooting**    
 ```
 bcftools view 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf | vcflib vcfrandomsample -r 0.01 > 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb_subset_0.01.vcf
 
