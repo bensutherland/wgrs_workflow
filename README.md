@@ -186,7 +186,8 @@ bcftools view 05_genotyping/<filtered>_LD0.5w50kb.bcf | grep -vE '^#' - | wc -l
 
 **Optional subsetting to simplify troubleshooting**    
 ```
-bcftools view 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb.bcf | vcflib vcfrandomsample -r 0.01 > 05_genotyping/mpileup_calls_filt_AF_0.05_LD.0.5.50kb_subset_0.01.vcf
+bcftools view 05_genotyping/mpileup_calls_noindel5_miss0.1_SNP_q20_avgDP10_biallele_minDP4_maxDP100_miss0.001_AF_0.05_LD0.5w50kb.bcf | vcflib vcfrandomsample -r 0.05 > 05_genotyping/mpileup_calls_noindel5_miss0.1_SNP_q20_avgDP10_biallele_minDP4_maxDP100_miss0.001_AF_0.05_LD0.5w50kb_subset0.05.vcf
+
 
 ```
 
