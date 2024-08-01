@@ -1,6 +1,6 @@
 # wgrs_workflow
 Workflow to support genotyping of moderate/ high depth whole-genome resequence data.       
-Developed by Ben J. G. Sutherland, Ph.D. (Sutherland Bioinformatics) in the working group of Timothy J. Green (VIU).     
+Developed by Ben J. G. Sutherland, Ph.D. (Sutherland Bioinformatics & VIU) in the working group of Timothy J. Green (VIU).     
 
 **Note**: this software is provided 'as is', without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in action of contract, tort or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.       
 
@@ -23,9 +23,9 @@ If you find this tool useful, please cite the original article that uses the too
 Please also be sure to cite the tools applied within each function.      
 
 ## Sections ##
-[00. Getting started](#00-getting-started)
-[01. Prepare data](#01-prepare-data)
-[02. Quality control and trimming](#03-quality-control-and-trimming)
+[00. Getting started](#00-getting-started)    
+[01. Prepare data](#01-prepare-data)    
+[02. Quality control and trimming](#03-quality-control-and-trimming)    
 
 
 ## 00. Getting started ##
