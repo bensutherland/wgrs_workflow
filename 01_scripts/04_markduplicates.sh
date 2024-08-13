@@ -1,6 +1,6 @@
 #!/bin/bash
 # Remove duplicates in each BAM (PCR or optical)
-#  note: set REM_DUPS=FALSE if you want to only mark duplicates
+#  note: set REM_DUPS=false if you want to only mark duplicates
 
 TIMESTAMP=$(date +%Y-%m-%d_%Hh%Mm%Ss)
 
@@ -15,7 +15,7 @@ do
     # Reporting
     echo "Marking duplicates for: " $file
 
-    # Calculate coverage
+    # Mark duplicates, and remove (if specified by variable)
     $JAVA -jar $PICARD MarkDuplicates I=$file \
         O="${file%.bam}"_mdups.bam \
         M="${file%.bam}"_mdups_metrics.txt \
