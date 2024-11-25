@@ -60,8 +60,10 @@ multiqc -o 02_raw/trimmed/fastqc_trimmed/ 02_raw/trimmed/fastqc_trimmed
 # open and view 02_raw/trimmed/fastqc_trimmed/multiqc_report.html          
 ```
 
-If no combining of different samples together is needed, simply copy links from the trimmed folder to the sample folder:    
-`cp -l 02_raw/trimmed/*.fastq.gz 04_samples/`
+Once fastqc has been completed, move the samples to the sample folder:      
+`mv 02_raw/trimmed/*.fastq.gz 04_samples/`     
+...note: mv is used instead of cp -l to avoid duplicate storage if the directory is backed up elsewhere.  
+
 
 
 ### 03. Align reads against reference genome ###
