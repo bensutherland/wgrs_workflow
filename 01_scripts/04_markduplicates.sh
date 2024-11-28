@@ -1,5 +1,5 @@
 #!/bin/bash
-# Remove duplicates in each BAM (PCR or optical)
+# Mark or remove duplicates in each BAM (PCR or optical)
 #  note: set REM_DUPS=false if you want to only mark duplicates
 
 TIMESTAMP=$(date +%Y-%m-%d_%Hh%Mm%Ss)
