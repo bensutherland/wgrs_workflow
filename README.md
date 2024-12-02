@@ -159,15 +159,16 @@ Allele Frequency:
 ## Allele frequency 
 # note, below replace <filtered> with your filtered filename
 
-# Add the AF to the dataset, then filter:       
+# Note, if want to add the AF to the dataset
 bcftools +fill-tags 05_genotyping/<filtered>.bcf -Ob -o 05_genotyping/<filtered>_AF.bcf -- -t AF
 # note: bcftools plugin options are after the '--' indicator     
 
-# Filter
-bcftools view -i 'INFO/AF > 0.05' 05_genotyping/<filtered>_AF.bcf -Ob -o 05_genotyping/<filtered>_AF_0.05.bcf
+# Filter for minor allele frequency
+bcftools view -q 0.05:minor 05_genotyping/<filtered>.bcf -Ob -o 05_genotyping/<filtered>_maf0.05.bcf
+# note: it is important to set the type of allele being filtered by the above (here: minor)
 
 # How many variants remain? 
-bcftools view 05_genotyping/<filtered>_AF_0.05.bcf | grep -vE '^#' - | wc -l    
+bcftools view 05_genotyping/<filtered>_maf0.05.bcf | grep -vE '^#' - | wc -l    
 ```
 
 Linkage:     
@@ -183,7 +184,7 @@ bcftools view 05_genotyping/<filtered>_LD0.5w50kb.bcf | grep -vE '^#' - | wc -l
 
 **Optional subsetting to simplify troubleshooting**    
 ```
-bcftools view 05_genotyping/mpileup_calls_noindel5_miss0.1_SNP_q20_avgDP10_biallele_minDP4_maxDP100_miss0.001_AF_0.05_LD0.5w50kb.bcf | vcflib vcfrandomsample -r 0.05 > 05_genotyping/mpileup_calls_noindel5_miss0.1_SNP_q20_avgDP10_biallele_minDP4_maxDP100_miss0.001_AF_0.05_LD0.5w50kb_subset0.05.vcf
+bcftools view 05_genotyping/<LD-filtered>.bcf | vcflib vcfrandomsample -r 0.05 > 05_genotyping/<LD-filtered.bcf>_subset0.05.vcf
 
 
 ```
