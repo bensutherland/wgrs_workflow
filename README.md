@@ -142,6 +142,7 @@ Run with defaults, this script will:
 At each stage, the script will report the number of variants retained.    
 There will also be a log file produced as `<date>_<time>_filter_bcf.log`.    
 
+Note: all intermediate filter files will be retained, so if needed, delete to save space.    
 
 Alternately, this can be run manually to output only a single file:            
 ```
@@ -189,6 +190,6 @@ bcftools view 05_genotyping/<LD-filtered>.bcf | vcflib vcfrandomsample -r 0.05 >
 
 ```
 
-Bring the VCF or the subset VCF to your next analysis program.    
+Bring the BCF or the subset VCF to your next analysis program.    
 
 
