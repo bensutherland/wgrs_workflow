@@ -18,7 +18,7 @@ Please note: this pipeline was developed and inspired by code from [Eric Normand
 - bcftools
 
 #### Citation ####
-If you find this tool useful, please cite the original article that uses the tool:        
+If you find this tool useful, please cite the original article that uses the tool: (currently uploading)       
 
 Please also be sure to cite the tools applied within each function.      
 
